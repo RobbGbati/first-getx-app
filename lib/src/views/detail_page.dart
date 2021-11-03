@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,21 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   int _currentIndex = 0;
+  List imgs = [];
+
+  _readData() async {
+    await DefaultAssetBundle.of(context).loadString("json/img.json").then((s) {
+      setState(() {
+        imgs = json.decode(s);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _readData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +54,7 @@ class _DetailPageState extends State<DetailPage> {
           Positioned(
             top: 320,
             left: 0,
-            child: Container(width: 80, height: 80, color: Color(0Xfff9fbfc))),
+            child: Container(width: width, height: height, color: Color(0Xfff9fbfc))),
           Positioned(
             child: box(width),
             top: 250,
@@ -66,7 +82,8 @@ class _DetailPageState extends State<DetailPage> {
             ),
           ),
           // show images
-          images()
+          images(),
+          favourites()
         ],
       ),
     ));
@@ -83,13 +100,13 @@ class _DetailPageState extends State<DetailPage> {
           child: Row(children: [
             CircleAvatar(
                 radius: 40,
-                backgroundImage: AssetImage("images/background.jpg")),
+                backgroundImage: AssetImage(Get.arguments['img'])),
             SizedBox(width: 10),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Jamy Moofle",
+                  Text(Get.arguments['name'],
                       style: TextStyle(
                           color: Color(0XFF3b3f42),
                           fontSize: 18,
@@ -117,7 +134,7 @@ class _DetailPageState extends State<DetailPage> {
     return Container(
       margin: EdgeInsets.only(left: 25, right: 25),
       width: width,
-      height: 250,
+      height: 270,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Color(0xfffcfffe),
@@ -135,33 +152,33 @@ class _DetailPageState extends State<DetailPage> {
               Container(
                 child: Row(
                   children: [
-                    Text("Title",
+                    Text(Get.arguments['title'],
                         style: Utils()
-                            .createTextStyle(30, weight: FontWeight.w500)),
+                            .createTextStyle(30, weight: FontWeight.w500, color: Colors.black)),
                     Expanded(child: Container())
                   ],
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Container(
                 width: width,
-                child: Text("Text",
+                child: Text(Get.arguments['text'],
                     style:
-                        Utils().createTextStyle(20, color: Color(0xffb8b8b8))),
+                        Utils().createTextStyle(17, color: Color(0xffb8b8b8))),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Divider(
                 thickness: 1,
               ),
               SizedBox(
-                height: 10,
+                height: 6,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(Icons.watch_later, color: Colors.yellow),
                   SizedBox(
@@ -171,7 +188,7 @@ class _DetailPageState extends State<DetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Name",
+                      Text(Get.arguments['name'],
                           style: Utils().createTextStyle(18,
                               weight: FontWeight.w500,
                               color: Color(0xff303030))),
@@ -179,34 +196,47 @@ class _DetailPageState extends State<DetailPage> {
                           style: Utils()
                               .createTextStyle(18, color: Color(0xffa0a0a0)))
                     ],
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(Icons.monetization_on, color: Color(0xfffb8789)),
-                  SizedBox(width: 5,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("499",
-                        style: Utils().createTextStyle(18, color: Color(0xffadadaa), weight: FontWeight.w700)),
-                      Text("Prize", style: Utils().createTextStyle(18, color: Color(0xffacacac)))
+                      Icon(Icons.monetization_on, color: Color(0xfffb8789)),
+                      SizedBox(width: 5,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(Get.arguments['prize'],
+                            style: Utils().createTextStyle(18, color: Color(0xffadadaa), weight: FontWeight.w700)),
+                          Text("Prize", style: Utils().createTextStyle(18, color: Color(0xffacacac)))
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(width: 20,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.star_border_purple500, color: Colors.yellowAccent),
+                      SizedBox(width: 5,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Top Level ",
+                            style: Utils().createTextStyle(18, color: Colors.blueGrey, weight: FontWeight.w700)),
+                          Text("Entry",
+                            style: Utils().createTextStyle(18, color: Colors.redAccent[400]!))
+                        ],
+                      )
+ 
                     ],
                   )
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text("Top Level",
-                    style: Utils().createTextStyle(18, color: Colors.blueGrey, weight: FontWeight.w700)),
-                  Text("Entry",
-                    style: Utils().createTextStyle(18, color: Colors.redAccent[400]!))
-                ],
-              )
             ],
           ),
         ),
@@ -214,6 +244,43 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget images() => Stack(
+    children: [
+      for(int i = 0; i < imgs.length; i++)
+      Positioned(
+        top: 590,
+        left: (20+i*35).toDouble(),
+        width: 50,
+        height: 50,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            image: DecorationImage(
+              image: AssetImage(imgs[i]['img']),
+              fit: BoxFit.cover
+            )
+          ),
+        )
+      )
+    ],
+  );
 
+  Widget favourites() => Positioned(
+    top: 670,
+    left: 25,
+    child: Row(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Color(0xfffbc33e)
+          ),
+          child: Icon(Icons.favorite_border, color: Colors.white)
+        ),
+        SizedBox(width: 10,),
+        Text("Add to favorite", style: Utils().createTextStyle(18, color: Color(0xfffbc33e)))
+      ],
+    )
   );
 }

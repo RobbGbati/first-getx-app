@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:get_app/src/views/recent_contest.dart';
 
 class ContentPage extends StatefulWidget {
   const ContentPage({ Key? key }) : super(key: key);
@@ -150,7 +151,14 @@ class _ContentPageState extends State<ContentPage> {
       itemBuilder: (_, i) {
         return GestureDetector(
           onTap: () {
-            Get.toNamed("/detail");
+            Get.toNamed("/detail", arguments: {
+              'title': infos[i]['title'].toString(),
+              'text': infos[i]['text'].toString(),
+              'name': infos[i]['name'].toString(),
+              'img': infos[i]['img'].toString(),
+              'time': infos[i]['time'].toString(),
+              'prize': infos[i]['prize'].toString(),
+            });
           },
           child: Container(
             padding: EdgeInsets.only(left: 25, right: 25),
@@ -235,7 +243,10 @@ class _ContentPageState extends State<ContentPage> {
             borderRadius: BorderRadius.circular(8),
             color: Color(0Xfffdc333c)
           ),
-          child: GestureDetector()
+          child: GestureDetector(
+            onTap: () => Get.to(() => RecentContest()),
+            child: Icon(Icons.arrow_forward_ios, color: Colors.white)
+          )
         )
       ]
     )
@@ -262,21 +273,21 @@ class _ContentPageState extends State<ContentPage> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage("images/background.jpg")
+                    backgroundImage: AssetImage(lists[i]['img'])
                   ),
                   SizedBox(width: 10),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("status", style: TextStyle(
-                        color: Color(0xfffdebb2),
-                        fontSize: 12,
+                      Text(lists[i]['status'], style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 18,
                         decoration: TextDecoration.none
                       )),
                       SizedBox(height: 5),
                       SizedBox(width: 170, 
-                        child: Text('Text',
+                        child: Text(lists[i]['text'],
                           style: TextStyle(
                             color: Color(0Xff3b3f42),
                             fontSize: 18,
@@ -289,7 +300,7 @@ class _ContentPageState extends State<ContentPage> {
                     width: 70,
                     height: 70,
                     child: Text(
-                      "Time",
+                     lists[i]['status'],
                       style: TextStyle(
                         fontSize: 10,
                         decoration: TextDecoration.none,
